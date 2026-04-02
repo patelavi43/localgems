@@ -150,14 +150,13 @@ exports.createOrUpdateProfile = async (req, res, next) => {
     };
 
     // Save uploaded image paths if present
-const BASE_URL = process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
 
 if (req.files?.profilePhoto?.[0]) {
-  profileData.profilePhoto = `${BASE_URL}/uploads/${req.files.profilePhoto[0].filename}`;
-}
-if (req.files?.backgroundImage?.[0]) {
-  profileData.backgroundImage = `${BASE_URL}/uploads/${req.files.backgroundImage[0].filename}`;
-}
+      profileData.profilePhoto = req.files.profilePhoto[0].path;
+    }
+    if (req.files?.backgroundImage?.[0]) {
+      profileData.backgroundImage = req.files.backgroundImage[0].path;
+    }
 
     const existing = await TalentProfile.findOne({ user_id: userId });
     let profile;

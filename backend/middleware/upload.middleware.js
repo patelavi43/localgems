@@ -1,30 +1,34 @@
+// backend/middleware/upload.middleware.js
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 
-// Make sure uploads folder exists
-const uploadDir = 'uploads/';
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = `${req.user.id}-${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`;
-    cb(null, uniqueName);
+// Store directly to Cloudinary instead of local disk
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder:          'localgems/talents',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation:  [{ quality: 'auto', fetch_format: 'auto' }],
   },
 });
 
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|webp/;
-  const isValid = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+  const isValid = allowedTypes.test(file.mimetype.split('/')[1]);
   if (isValid) cb(null, true);
   else cb(new Error('Only JPG, PNG, and WEBP images are allowed'));
 };
 
 const upload = multer({
-  storage,
+  storage,   // ✅ Cloudinary storage instead of disk
   fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
 });

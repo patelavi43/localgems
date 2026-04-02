@@ -70,6 +70,8 @@ export const adminAPI = {
   getAnalytics: () => API.get('/admin/analytics'),
   getUsers: (params) => API.get('/admin/users', { params }),
   toggleUser: (id) => API.patch(`/admin/users/${id}/toggle`),
+  getPendingTalents: () => API.get('/admin/talents/pending'),
+  verifyTalent:      (id, action) => API.patch(`/admin/talents/${id}/verify`, { action }),
 };
 
 // ── Chat ─────────────────────────────────────────────────────
