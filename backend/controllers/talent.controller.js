@@ -16,7 +16,7 @@ exports.searchTalent = async (req, res, next) => {
       sort = '-rating.average',
     } = req.query;
 
-    const filter = { isActive: true };
+    const filter = { isActive: true, isVerified: true };
 
     // Filter by skill type
     if (skill_type) {
@@ -150,12 +150,14 @@ exports.createOrUpdateProfile = async (req, res, next) => {
     };
 
     // Save uploaded image paths if present
-    if (req.files?.profilePhoto?.[0]) {
-      profileData.profilePhoto = `/uploads/${req.files.profilePhoto[0].filename}`;
-    }
-    if (req.files?.backgroundImage?.[0]) {
-      profileData.backgroundImage = `/uploads/${req.files.backgroundImage[0].filename}`;
-    }
+const BASE_URL = process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
+
+if (req.files?.profilePhoto?.[0]) {
+  profileData.profilePhoto = `${BASE_URL}/uploads/${req.files.profilePhoto[0].filename}`;
+}
+if (req.files?.backgroundImage?.[0]) {
+  profileData.backgroundImage = `${BASE_URL}/uploads/${req.files.backgroundImage[0].filename}`;
+}
 
     const existing = await TalentProfile.findOne({ user_id: userId });
     let profile;

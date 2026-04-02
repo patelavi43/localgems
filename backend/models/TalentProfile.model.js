@@ -65,6 +65,12 @@ const talentProfileSchema = new mongoose.Schema(
     languages:      [String],
     tags:           [String],
     isVerified:     { type: Boolean, default: false },
+    verificationStatus: {
+  type:    String,
+  enum:    ['pending', 'approved', 'rejected'],
+  default: 'pending',
+},
+verificationNote: { type: String, default: '' }, // Admin's rejection reason
     isActive:       { type: Boolean, default: true },
     totalBookings:  { type: Number,  default: 0 },
     deletedAt:      { type: Date,    default: null },

@@ -4,7 +4,7 @@ const TalentProfile = require('../models/TalentProfile.model');
 const Review = require('../models/Review.model');
 const EventRequest = require('../models/EventRequest.model');
 
-// GET /api/admin/analytics
+// ─── GET /api/admin/analytics ────────────────────────────────
 exports.getAnalytics = async (req, res, next) => {
   try {
     const [
@@ -48,10 +48,10 @@ exports.getAnalytics = async (req, res, next) => {
         {
           $group: {
             _id: {
-              year: { $year: '$created_at' },
+              year:  { $year: '$created_at' },
               month: { $month: '$created_at' },
             },
-            count: { $sum: 1 },
+            count:   { $sum: 1 },
             revenue: { $sum: '$agreedPrice' },
           },
         },
@@ -81,7 +81,7 @@ exports.getAnalytics = async (req, res, next) => {
   }
 };
 
-// GET /api/admin/users
+// ─── GET /api/admin/users ─────────────────────────────────────
 exports.getUsers = async (req, res, next) => {
   try {
     const { role, page = 1, limit = 20, search } = req.query;
@@ -89,7 +89,7 @@ exports.getUsers = async (req, res, next) => {
     const filter = {};
     if (role) filter.role = role;
     if (search) filter.$or = [
-      { name: new RegExp(search, 'i') },
+      { name:  new RegExp(search, 'i') },
       { email: new RegExp(search, 'i') },
     ];
 
@@ -98,20 +98,90 @@ exports.getUsers = async (req, res, next) => {
       User.countDocuments(filter),
     ]);
 
-    res.json({ success: true, data: users, pagination: { page: parseInt(page), total, pages: Math.ceil(total / parseInt(limit)) } });
+    res.json({
+      success: true,
+      data: users,
+      pagination: {
+        page:  parseInt(page),
+        total,
+        pages: Math.ceil(total / parseInt(limit)),
+      },
+    });
   } catch (error) {
     next(error);
   }
 };
 
-// PATCH /api/admin/users/:id/toggle
+// ─── PATCH /api/admin/users/:id/toggle ───────────────────────
 exports.toggleUserStatus = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
     user.isActive = !user.isActive;
     await user.save();
-    res.json({ success: true, message: `User ${user.isActive ? 'activated' : 'deactivated'}`, data: user });
+    res.json({
+      success: true,
+      message: `User ${user.isActive ? 'activated' : 'deactivated'}`,
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ─── GET /api/admin/talents/pending ──────────────────────────
+// Returns all talent profiles waiting for admin approval
+exports.getPendingTalents = async (req, res, next) => {
+  try {
+    const pending = await TalentProfile.find({
+      verificationStatus: 'pending',
+    })
+      .populate('user_id', 'name email profile_pic createdAt')
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, data: pending });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ─── PATCH /api/admin/talents/:id/verify ─────────────────────
+// Admin approves or rejects a talent profile by TalentProfile _id
+exports.verifyTalent = async (req, res, next) => {
+  try {
+    const { action, note } = req.body;
+
+    if (!['approved', 'rejected'].includes(action)) {
+      return res.status(400).json({
+        success: false,
+        message: "action must be 'approved' or 'rejected'",
+      });
+    }
+
+    const profile = await TalentProfile.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          verificationStatus: action,
+          isVerified:         action === 'approved', // true only if approved
+          verificationNote:   note || '',
+        },
+      },
+      { new: true }
+    ).populate('user_id', 'name email');
+
+    if (!profile) {
+      return res.status(404).json({
+        success: false,
+        message: 'Talent profile not found',
+      });
+    }
+
+    res.json({
+      success: true,
+      message: `Talent ${action} successfully`,
+      data: profile,
+    });
   } catch (error) {
     next(error);
   }

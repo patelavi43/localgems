@@ -47,7 +47,7 @@ export default function TalentDashboardPage() {
             { label: 'Avg Rating', value: (profile.rating?.average || 0).toFixed(1), icon: '⭐' },
             { label: 'Total Reviews', value: profile.rating?.count || 0, icon: '💬' },
             { label: 'Total Bookings', value: profile.totalBookings || 0, icon: '📅' },
-            { label: 'प्रति घंटा दर', value: `₹${(profile.hourlyRate * 83).toLocaleString('en-IN')}`, icon: '💰' },
+            { label: 'Hourly Rate', value: `₹${(profile.hourlyRate || 0).toLocaleString('en-IN')}`, icon: '💰' },
           ].map(({ label, value, icon }) => (
             <div key={label} className="card p-5 text-center">
               <div className="text-3xl mb-2">{icon}</div>

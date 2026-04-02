@@ -28,6 +28,7 @@ import TalentBookingsPage from './pages/talent/TalentBookingsPage';
 // Admin pages
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
+import AdminVerifyTalentsPage from './pages/admin/AdminVerifyTalentsPage';
 
 export default function App() {
   const { loading } = useAuth();
@@ -67,6 +68,7 @@ export default function App() {
         <Route element={<ProtectedRoute roles={['Admin']} />}>
           <Route path="/admin" element={<AdminDashboardPage />} />
           <Route path="/admin/users" element={<AdminUsersPage />} />
+          <Route path="/admin/verify-talents" element={<AdminVerifyTalentsPage />} />
         </Route>
 
         {/* Catch-all */}
