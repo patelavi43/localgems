@@ -81,7 +81,7 @@ export default function EditProfilePage() {
         years: parseInt(form.experienceYears) || 0,
         description: form.experienceDesc,
       }));
-      formData.append('hourlyRate', parseFloat(form.hourlyRate) || 0);
+      formData.append('hourlyRate', parseInt(form.hourlyRate) || 0);
       formData.append('location', JSON.stringify({ city: form.city, country: form.country }));
       formData.append('languages', JSON.stringify(form.languages.split(',').map(l => l.trim()).filter(Boolean)));
       formData.append('tags', JSON.stringify(form.tags.split(',').map(t => t.trim()).filter(Boolean)));

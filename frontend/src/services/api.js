@@ -37,7 +37,9 @@ export const talentAPI = {
   search: (params) => API.get('/talent', { params }),
   getById: (id) => API.get(`/talent/${id}`),
   getMyProfile: () => API.get('/talent/me'),
-  createOrUpdate: (data) => API.post('/talent', data),
+  createOrUpdate: (data) => API.post('/talent', data, {
+  headers: { 'Content-Type': 'multipart/form-data' },
+}),  
   updateAvailability: (id, availability) => API.patch(`/talent/${id}/availability`, { availability }),
   addPortfolio: (data) => API.post('/talent/portfolio', data),
 };

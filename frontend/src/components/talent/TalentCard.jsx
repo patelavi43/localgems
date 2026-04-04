@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
 import StarRating from '../common/StarRating';
 
-const USD_TO_INR = 83;
-const toINR = (usd) => (usd * USD_TO_INR).toLocaleString('en-IN');
+const formatINR = (amount) => (amount || 0).toLocaleString('en-IN');
 
 const SKILL_COLORS = {
   Singer: 'bg-pink-900/40 text-pink-300 border-pink-700/40',
