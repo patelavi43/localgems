@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 import StarRating from '../common/StarRating';
 
-const USD_TO_INR = 83;
-const toINR = (usd) => (usd * USD_TO_INR).toLocaleString('en-IN');
+// ✅ FIX: Removed USD_TO_INR conversion — hourlyRate is already stored in INR
+const formatINR = (amount) =>
+  (amount || 0).toLocaleString('en-IN');
 
 const SKILL_COLORS = {
   Singer: 'bg-pink-900/40 text-pink-300 border-pink-700/40',
@@ -19,7 +20,10 @@ const SKILL_COLORS = {
 
 export default function TalentCard({ talent }) {
   const user = talent.user_id;
-  const avatar = user?.profile_pic
+
+  // ✅ FIX: Check profilePhoto (TalentProfile field) first, then user.profile_pic, then dicebear fallback
+  const avatar = talent.profilePhoto
+    || user?.profile_pic
     || `https://api.dicebear.com/7.x/personas/svg?seed=${user?.name || talent._id}`;
 
   const primarySkill = talent.skill_type?.[0] || 'Other';
@@ -28,9 +32,16 @@ export default function TalentCard({ talent }) {
   return (
     <Link to={`/talent/${talent._id}`} className="block group">
       <div className="card-hover p-0 overflow-hidden transition-all duration-300 group-hover:shadow-lg group-hover:shadow-gem-900/40 group-hover:-translate-y-1">
-        {/* Portfolio preview / avatar area */}
+        {/* Portfolio preview / background image / avatar area */}
         <div className="relative h-48 bg-gradient-to-br from-gem-900 to-gem-950 overflow-hidden">
-          {talent.portfolio?.[0]?.mediaUrl ? (
+          {/* ✅ FIX: Show backgroundImage if available, else portfolio, else plain gradient */}
+          {talent.backgroundImage ? (
+            <img
+              src={talent.backgroundImage}
+              alt="background"
+              className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500"
+            />
+          ) : talent.portfolio?.[0]?.mediaUrl ? (
             <img
               src={talent.portfolio[0].mediaUrl}
               alt={talent.portfolio[0].title}
@@ -56,10 +67,10 @@ export default function TalentCard({ talent }) {
             </div>
           )}
 
-          {/* Price badge */}
+          {/* ✅ FIX: Price badge — no * 83, just raw INR value */}
           <div className="absolute bottom-3 right-3">
             <span className="bg-gem-950/90 backdrop-blur-sm text-gem-200 text-sm font-medium px-2.5 py-1 rounded-lg border border-gem-700/50">
-              ₹{toINR(talent.hourlyRate)}<span className="text-gem-500 text-xs">/hr</span>
+              ₹{formatINR(talent.hourlyRate)}<span className="text-gem-500 text-xs">/hr</span>
             </span>
           </div>
         </div>
@@ -67,6 +78,7 @@ export default function TalentCard({ talent }) {
         {/* Card body */}
         <div className="p-4">
           <div className="flex items-start gap-3">
+            {/* ✅ FIX: Use resolved avatar (profilePhoto → profile_pic → dicebear) */}
             <img
               src={avatar}
               alt={user?.name}
