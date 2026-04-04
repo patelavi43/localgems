@@ -28,7 +28,7 @@ export default function AdminDashboardPage() {
     { label: 'Total Users', value: summary?.totalUsers || 0, icon: '👥', color: 'from-blue-900/50 to-blue-950' },
     { label: 'Talent Providers', value: summary?.totalTalents || 0, icon: '⭐', color: 'from-gem-900/50 to-gem-950' },
     { label: 'Total Bookings', value: summary?.totalBookings || 0, icon: '📅', color: 'from-emerald-900/50 to-emerald-950' },
-    { label: 'Revenue Generated', value: `₹${((summary?.totalRevenue || 0) * 83).toLocaleString('en-IN')}`, icon: '💰', color: 'from-yellow-900/50 to-yellow-950' },
+    { label: 'Revenue Generated', value: `₹${(summary?.totalRevenue || 0).toLocaleString('en-IN')}`, icon: '💰', color: 'from-yellow-900/50 to-yellow-950' },
   ];
 
   const STATUS_COLORS = { Pending: '#fbbf24', Confirmed: '#60a5fa', Completed: '#34d399', Canceled: '#f87171' };
@@ -37,7 +37,12 @@ export default function AdminDashboardPage() {
     <div className="page-container">
       <div className="flex items-center justify-between mb-8">
         <h1 className="section-title">Admin Dashboard</h1>
-        <Link to="/admin/users" className="btn-secondary text-sm">Manage Users</Link>
+        <div className="flex gap-3">
+          <Link to="/admin/verify-talents" className="btn-primary text-sm">
+            ✅ Verify Talents
+          </Link>
+          <Link to="/admin/users" className="btn-secondary text-sm">Manage Users</Link>
+        </div>
       </div>
 
       {/* Summary cards */}
@@ -120,7 +125,7 @@ export default function AdminDashboardPage() {
                   <p className="text-gem-500 text-xs">{b.event_date ? format(new Date(b.event_date), 'MMM d, yyyy') : ''}</p>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <span className="text-gem-300 text-xs">₹{(b.agreedPrice * 83).toLocaleString('en-IN')}</span>
+                  <span className="text-gem-300 text-xs">₹{(b.agreedPrice || 0).toLocaleString('en-IN')}</span>
                   <BookingStatusBadge status={b.status} />
                 </div>
               </div>
