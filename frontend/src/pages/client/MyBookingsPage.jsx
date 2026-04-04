@@ -50,6 +50,8 @@ export default function MyBookingsPage() {
     finally { setSubmitting(false); }
   };
 
+  const STATUS_FILTERS = ['', 'Pending', 'Confirmed', 'Completed', 'Canceled'];
+
   return (
     <div className="page-container max-w-4xl">
       <div className="flex items-center justify-between mb-8">
@@ -59,7 +61,7 @@ export default function MyBookingsPage() {
 
       {/* Status filter tabs */}
       <div className="flex gap-1 bg-gem-900/40 p-1 rounded-xl mb-6 overflow-x-auto">
-        {[['', 'Pending', 'Confirmed', 'Completed', 'Canceled']].map(s => (
+        {STATUS_FILTERS.map(s => (
           <button key={s} onClick={() => setFilter(s)}
             className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${filter === s ? 'bg-gem-700 text-white' : 'text-gem-400 hover:text-gem-200'}`}
           >
@@ -103,7 +105,6 @@ export default function MyBookingsPage() {
                       </div>
                       <div className="flex flex-wrap gap-1.5">
                         <BookingStatusBadge status={booking.status} />
-                        {/* Only show payment badge if payment has been made */}
                         {booking.paymentStatus !== 'Unpaid' && (
                           <PaymentStatusBadge status={booking.paymentStatus} />
                         )}
