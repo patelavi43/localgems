@@ -37,12 +37,7 @@ export default function AdminDashboardPage() {
     <div className="page-container">
       <div className="flex items-center justify-between mb-8">
         <h1 className="section-title">Admin Dashboard</h1>
-         <div className="flex gap-3">
-          <Link to="/admin/verify-talents" className="btn-primary text-sm">
-            ✅ Verify Talents
-          </Link>
-          <Link to="/admin/users" className="btn-secondary text-sm">Manage Users</Link>
-         </div>
+        <Link to="/admin/users" className="btn-secondary text-sm">Manage Users</Link>
       </div>
 
       {/* Summary cards */}

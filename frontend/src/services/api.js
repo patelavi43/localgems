@@ -37,9 +37,7 @@ export const talentAPI = {
   search: (params) => API.get('/talent', { params }),
   getById: (id) => API.get(`/talent/${id}`),
   getMyProfile: () => API.get('/talent/me'),
-  createOrUpdate: (data) => API.post('/talent', data, {
-  headers: { 'Content-Type': 'multipart/form-data' },
-}),  
+  createOrUpdate: (data) => API.post('/talent', data),
   updateAvailability: (id, availability) => API.patch(`/talent/${id}/availability`, { availability }),
   addPortfolio: (data) => API.post('/talent/portfolio', data),
 };
@@ -55,7 +53,8 @@ export const bookingAPI = {
 // ── Reviews ──────────────────────────────────────────────────
 export const reviewAPI = {
   create: (data) => API.post('/reviews', data),
-  getTalentReviews: (talentId, params) => API.get(`/reviews/talent/${talentId}`, { params }),
+  getTalentReviews: (talentId, params) =>
+    API.get(`/reviews/talent/${talentId}`, { params }),
 };
 
 // ── Events ───────────────────────────────────────────────────
@@ -64,7 +63,8 @@ export const eventAPI = {
   getAll: (params) => API.get('/events', { params }),
   getById: (id) => API.get(`/events/${id}`),
   apply: (id, data) => API.post(`/events/${id}/apply`, data),
-  respondToApplicant: (id, applicantId, data) => API.patch(`/events/${id}/applicants/${applicantId}`, data),
+  respondToApplicant: (id, applicantId, data) =>
+    API.patch(`/events/${id}/applicants/${applicantId}`, data),
 };
 
 // ── Admin ────────────────────────────────────────────────────
@@ -73,15 +73,18 @@ export const adminAPI = {
   getUsers: (params) => API.get('/admin/users', { params }),
   toggleUser: (id) => API.patch(`/admin/users/${id}/toggle`),
   getPendingTalents: () => API.get('/admin/talents/pending'),
-  verifyTalent:      (id, action) => API.patch(`/admin/talents/${id}/verify`, { action }),
+  verifyTalent: (id, action) =>
+    API.patch(`/admin/talents/${id}/verify`, { action }),
 };
 
 // ── Chat ─────────────────────────────────────────────────────
 export const chatAPI = {
   getConversations: () => API.get('/chat/conversations'),
-  startConversation: (talentUserId) => API.post('/chat/start', { talentUserId }),
+  startConversation: (talentUserId) =>
+    API.post('/chat/start', { talentUserId }),
   getMessages: (id) => API.get(`/chat/${id}`),
-  sendMessage: (id, content) => API.post(`/chat/${id}/message`, { content }),
+  sendMessage: (id, content) =>
+    API.post(`/chat/${id}/message`, { content }),
 };
 
 export default API;
