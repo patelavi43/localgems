@@ -11,7 +11,7 @@ export default function MyBookingsPage() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
-  const [reviewModal, setReviewModal] = useState(null); // { bookingId, talentId }
+  const [reviewModal, setReviewModal] = useState(null);
   const [reviewForm, setReviewForm] = useState({ rating: 0, review_text: '' });
   const { t } = useLang();
   const [submitting, setSubmitting] = useState(false);
@@ -103,7 +103,10 @@ export default function MyBookingsPage() {
                       </div>
                       <div className="flex flex-wrap gap-1.5">
                         <BookingStatusBadge status={booking.status} />
-                        <PaymentStatusBadge status={booking.paymentStatus} />
+                        {/* Only show payment badge if payment has been made */}
+                        {booking.paymentStatus !== 'Unpaid' && (
+                          <PaymentStatusBadge status={booking.paymentStatus} />
+                        )}
                       </div>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
