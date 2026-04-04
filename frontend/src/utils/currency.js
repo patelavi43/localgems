@@ -1,13 +1,13 @@
 // Shared INR currency utility — used across all components
-export const USD_TO_INR = 83;
+// All amounts are stored and handled as INR directly. No USD conversion.
 
-// Convert USD stored value → display as ₹
-export const toINR = (usd) =>
-  `₹${Math.round((usd || 0) * USD_TO_INR).toLocaleString('en-IN')}`;
+// Format raw INR amount → display as ₹
+export const toINR = (amount) =>
+  `₹${(amount || 0).toLocaleString('en-IN')}`;
 
-// Convert INR input → USD for API storage
+// Return raw INR value for API (no conversion needed)
 export const fromINR = (inr) =>
-  inr ? Math.round(parseFloat(inr) / USD_TO_INR) : '';
+  inr ? parseFloat(inr) : '';
 
 // Format ₹ with /hr suffix
-export const toINRHr = (usd) => `${toINR(usd)}/घंटा`;
+export const toINRHr = (amount) => `${toINR(amount)}/hr`;
