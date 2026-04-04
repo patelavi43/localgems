@@ -45,7 +45,7 @@ export default function TalentListPage() {
   const fetchTalents = useCallback(async () => {
     setLoading(true);
     try {
-      // Convert INR budget back to USD for the API
+      // Send INR budget directly to API — no USD conversion
       const params = {
         ...appliedFilters,
         budgetMin: appliedFilters.budgetMin || '',
