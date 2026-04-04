@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 
-const USD_TO_INR = 83;
-const toINR = (usd) => (usd * USD_TO_INR).toLocaleString('en-IN');
+const toINR = (amount) => (amount || 0).toLocaleString('en-IN');
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 import { talentAPI, reviewAPI, bookingAPI, chatAPI } from '../../services/api';
@@ -72,7 +71,9 @@ export default function TalentProfilePage() {
   if (!talent) return <div className="page-container text-center py-20 text-gem-400">Talent not found</div>;
 
   const talentUser = talent.user_id;
-  const avatar = talentUser?.profile_pic || `https://api.dicebear.com/7.x/personas/svg?seed=${talentUser?.name}`;
+  const avatar = talent.profilePhoto
+  || talentUser?.profile_pic
+  || `https://api.dicebear.com/7.x/personas/svg?seed=${talentUser?.name}`;
 
   return (
     <div className="page-container max-w-5xl">
@@ -80,9 +81,11 @@ export default function TalentProfilePage() {
       <div className="card overflow-hidden mb-6">
         {/* Cover image / portfolio first item */}
         <div className="relative h-48 sm:h-64 bg-gradient-to-br from-gem-900 to-gem-950">
-          {talent.portfolio?.[0]?.mediaUrl && (
-            <img src={talent.portfolio[0].mediaUrl} alt="" className="w-full h-full object-cover opacity-50" />
-          )}
+          {talent.backgroundImage ? (
+  <img src={talent.backgroundImage} alt="" className="w-full h-full object-cover opacity-60" />
+) : talent.portfolio?.[0]?.mediaUrl ? (
+  <img src={talent.portfolio[0].mediaUrl} alt="" className="w-full h-full object-cover opacity-50" />
+) : null}
           <div className="absolute inset-0 bg-gradient-to-t from-gem-950 via-gem-950/30 to-transparent" />
         </div>
 

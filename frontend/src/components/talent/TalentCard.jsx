@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import StarRating from '../common/StarRating';
 
+const formatINR = (amount) =>
+  (amount || 0).toLocaleString('en-IN');
 const USD_TO_INR = 83;
 const toINR = (usd) => (usd * USD_TO_INR).toLocaleString('en-IN');
 

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLang } from '../../context/LanguageContext';
 
-const USD_TO_INR = 83;
 const SKILL_TYPES = ['Singer', 'Dancer', 'Musician', 'Actor', 'Comedian', 'Athlete', 'Teacher', 'Photographer', 'DJ', 'Speaker', 'Chef', 'Magician'];
 const SKILL_EMOJIS = { Singer:'🎤', Dancer:'💃', Musician:'🎸', Actor:'🎭', Comedian:'😄', Athlete:'🏅', Teacher:'📚', Photographer:'📷', DJ:'🎧', Magician:'🪄', Speaker:'🎙️', 'Fitness Trainer':'💪', Chef:'👨‍🍳' };
 
@@ -16,7 +15,7 @@ export default function HomePage() {
     const params = new URLSearchParams();
     if (search.skill_type) params.set('skill_type', search.skill_type);
     if (search.location) params.set('location', search.location);
-    if (search.budget) params.set('budgetMax', Math.round(parseFloat(search.budget) / USD_TO_INR));
+    if (search.budget) params.set('budgetMax', search.budget);
     navigate(`/talent?${params.toString()}`);
   };
 
