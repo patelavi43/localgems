@@ -1,9 +1,10 @@
 const express = require('express');
 const { body } = require('express-validator');
 const router = express.Router();
-const { register, login, getMe, updateProfile, changePassword } = require('../controllers/auth.controller');
+const { register, login, getMe, updateProfile, changePassword, uploadAvatar } = require('../controllers/auth.controller');
 const { protect } = require('../middleware/auth.middleware');
 const { validate } = require('../middleware/validate.middleware');
+const { upload } = require('../config/cloudinary');
 
 const registerValidation = [
   body('name').trim().notEmpty().withMessage('Name is required'),
@@ -22,5 +23,8 @@ router.post('/login', loginValidation, validate, login);
 router.get('/me', protect, getMe);
 router.patch('/profile', protect, updateProfile);
 router.patch('/change-password', protect, changePassword);
+
+// Profile picture upload — multipart/form-data, field name: "profile_pic"
+router.post('/profile/upload-avatar', protect, upload.single('profile_pic'), uploadAvatar);
 
 module.exports = router;

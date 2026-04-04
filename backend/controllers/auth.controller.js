@@ -29,19 +29,17 @@ const userResponse = (user, token) => ({
   },
 });
 
-// ─── Register ─────────────────────────────────────────────────
+// ─── Register ────────────────────────────────────────────────────
 // POST /api/auth/register
 exports.register = async (req, res, next) => {
   try {
     const { name, email, password, role, phone, location } = req.body;
 
-    // Check for existing user
     const existing = await User.findOne({ email });
     if (existing) {
       return res.status(409).json({ success: false, message: 'Email already registered' });
     }
 
-    // Only allow Client or TalentProvider on public registration
     const allowedRoles = ['Client', 'TalentProvider'];
     const userRole = allowedRoles.includes(role) ? role : 'Client';
 
@@ -54,7 +52,8 @@ exports.register = async (req, res, next) => {
   }
 };
 
-// ─── Login ────────────────────────────────────────────────────
+// ─── Login ─────────────────────────────────────────────────────
+const loginValidation = null; // kept for reference
 // POST /api/auth/login
 exports.login = async (req, res, next) => {
   try {
@@ -77,7 +76,7 @@ exports.login = async (req, res, next) => {
   }
 };
 
-// ─── Get Me ───────────────────────────────────────────────────
+// ─── Get Me ─────────────────────────────────────────────────────
 // GET /api/auth/me
 exports.getMe = async (req, res, next) => {
   try {
@@ -92,7 +91,7 @@ exports.getMe = async (req, res, next) => {
   }
 };
 
-// ─── Update Profile ───────────────────────────────────────────
+// ─── Update Profile (text fields) ─────────────────────────────────────
 // PATCH /api/auth/profile
 exports.updateProfile = async (req, res, next) => {
   try {
@@ -108,7 +107,30 @@ exports.updateProfile = async (req, res, next) => {
   }
 };
 
-// ─── Change Password ──────────────────────────────────────────
+// ─── Upload Profile Picture ───────────────────────────────────────────
+// POST /api/auth/profile/upload-avatar
+exports.uploadAvatar = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No image file provided' });
+    }
+
+    // req.file.path = Cloudinary secure URL (from multer-storage-cloudinary)
+    const imageUrl = req.file.path;
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { profile_pic: imageUrl },
+      { new: true }
+    ).select('-password');
+
+    res.json({ success: true, user, profile_pic: imageUrl });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ─── Change Password ─────────────────────────────────────────────────
 // PATCH /api/auth/change-password
 exports.changePassword = async (req, res, next) => {
   try {
