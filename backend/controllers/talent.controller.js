@@ -18,14 +18,12 @@ exports.searchTalent = async (req, res, next) => {
 
     const filter = { isActive: true, isVerified: true };
 
-    // Filter by skill type
     if (skill_type) {
       filter.skill_type = {
         $in: Array.isArray(skill_type) ? skill_type : [skill_type],
       };
     }
 
-    // Filter by location (city, state, or country)
     if (location) {
       filter.$or = [
         { 'location.city': new RegExp(location, 'i') },
@@ -34,19 +32,16 @@ exports.searchTalent = async (req, res, next) => {
       ];
     }
 
-    // Filter by minimum rating
     if (ratingMin) {
       filter['rating.average'] = { $gte: parseFloat(ratingMin) };
     }
 
-    // Filter by hourly rate range
     if (budgetMin || budgetMax) {
       filter.hourlyRate = {};
       if (budgetMin) filter.hourlyRate.$gte = parseFloat(budgetMin);
       if (budgetMax) filter.hourlyRate.$lte = parseFloat(budgetMax);
     }
 
-    // Filter by availability date — FIX: use separate Date objects to avoid mutation bug
     if (availability) {
       const availDate = new Date(availability);
       const startOfDay = new Date(availDate);
@@ -66,7 +61,7 @@ exports.searchTalent = async (req, res, next) => {
 
     const [talents, total] = await Promise.all([
       TalentProfile.find(filter)
-        .populate('user_id', 'name profile_pic location') // FIX: profilepic → profile_pic
+        .populate('user_id', 'name profile_pic location')
         .sort(sort)
         .skip(skip)
         .limit(parseInt(limit))
@@ -95,7 +90,7 @@ exports.getTalentById = async (req, res, next) => {
     const talent = await TalentProfile.findOne({
       _id: req.params.id,
       isActive: true,
-    }).populate('user_id', 'name email profile_pic location phone createdAt'); // FIX: profilepic → profile_pic
+    }).populate('user_id', 'name email profile_pic location phone createdAt');
 
     if (!talent) {
       return res.status(404).json({
@@ -110,49 +105,31 @@ exports.getTalentById = async (req, res, next) => {
   }
 };
 
-// ─── Create / Update Talent Profile — POST /api/talent ───────
+// ─── Create / Update Talent Profile — POST /api/talent ───────────
 exports.createOrUpdateProfile = async (req, res, next) => {
   try {
     const userId = req.user.id;
 
-    // Parse JSON strings sent inside FormData
-    const skill_type = req.body.skill_type
-      ? JSON.parse(req.body.skill_type)
-      : [];
-    const experience = req.body.experience
-      ? JSON.parse(req.body.experience)
-      : {};
-    const location = req.body.location
-      ? JSON.parse(req.body.location)
-      : {};
-    const languages = req.body.languages
-      ? JSON.parse(req.body.languages)
-      : [];
-    const tags = req.body.tags
-      ? JSON.parse(req.body.tags)
-      : [];
-    const contact_info = req.body.contact_info
-      ? JSON.parse(req.body.contact_info)
-      : {};
+    const skill_type = req.body.skill_type ? JSON.parse(req.body.skill_type) : [];
+    const experience = req.body.experience ? JSON.parse(req.body.experience) : {};
+    const location = req.body.location ? JSON.parse(req.body.location) : {};
+    const languages = req.body.languages ? JSON.parse(req.body.languages) : [];
+    const tags = req.body.tags ? JSON.parse(req.body.tags) : [];
+    const contact_info = req.body.contact_info ? JSON.parse(req.body.contact_info) : {};
 
     const { bio, hourlyRate, currency } = req.body;
 
     const profileData = {
-      skill_type,
-      bio,
-      experience,
-      hourlyRate,
-      currency,
-      location,
-      languages,
-      tags,
-      contact_info,
+      skill_type, bio, experience, hourlyRate, currency,
+      location, languages, tags, contact_info,
     };
 
-    // Save uploaded image paths if present
-
-if (req.files?.profilePhoto?.[0]) {
+    // Save uploaded image paths to TalentProfile
+    if (req.files?.profilePhoto?.[0]) {
       profileData.profilePhoto = req.files.profilePhoto[0].path;
+
+      // ✅ KEY FIX: also sync to User.profile_pic so booking cards show real photo
+      await User.findByIdAndUpdate(userId, { profile_pic: req.files.profilePhoto[0].path });
     }
     if (req.files?.backgroundImage?.[0]) {
       profileData.backgroundImage = req.files.backgroundImage[0].path;
@@ -166,10 +143,10 @@ if (req.files?.profilePhoto?.[0]) {
         { user_id: userId },
         { $set: profileData },
         { new: true, runValidators: true }
-      ).populate('user_id', 'name email profile_pic'); // FIX: profilepic → profile_pic
+      ).populate('user_id', 'name email profile_pic');
     } else {
       profile = await TalentProfile.create({ user_id: userId, ...profileData });
-      await profile.populate('user_id', 'name email profile_pic'); // FIX: profilepic → profile_pic
+      await profile.populate('user_id', 'name email profile_pic');
     }
 
     res.status(existing ? 200 : 201).json({ success: true, data: profile });
@@ -178,10 +155,9 @@ if (req.files?.profilePhoto?.[0]) {
   }
 };
 
-// ─── Update Availability — PATCH /api/talent/:id/availability ─
+// ─── Update Availability — PATCH /api/talent/:id/availability ───
 exports.updateAvailability = async (req, res, next) => {
   try {
-    // FIX: destructure from req.body — frontend sends { availability: [...] }
     const { availability } = req.body;
 
     const profile = await TalentProfile.findOne({
@@ -213,7 +189,7 @@ exports.updateAvailability = async (req, res, next) => {
 exports.getMyProfile = async (req, res, next) => {
   try {
     const profile = await TalentProfile.findOne({ user_id: req.user.id })
-      .populate('user_id', 'name email profile_pic phone location'); // FIX: profilepic → profile_pic
+      .populate('user_id', 'name email profile_pic phone location');
 
     if (!profile) {
       return res.status(404).json({
@@ -228,7 +204,7 @@ exports.getMyProfile = async (req, res, next) => {
   }
 };
 
-// ─── Add Portfolio Item — POST /api/talent/portfolio ─────────
+// ─── Add Portfolio Item — POST /api/talent/portfolio ───────────
 exports.addPortfolioItem = async (req, res, next) => {
   try {
     const { title, description, mediaUrl, mediaType } = req.body;
