@@ -13,8 +13,6 @@ const SORT_OPTIONS = [
   { value: '-created_at', label: 'Newest' },
 ];
 
-const USD_TO_INR = 83;
-
 export default function TalentListPage() {
   const { t } = useLang();
   const [searchParams] = useSearchParams();
@@ -50,8 +48,8 @@ export default function TalentListPage() {
       // Convert INR budget back to USD for the API
       const params = {
         ...appliedFilters,
-        budgetMin: appliedFilters.budgetMin ? Math.round(parseFloat(appliedFilters.budgetMin) / USD_TO_INR) : '',
-        budgetMax: appliedFilters.budgetMax ? Math.round(parseFloat(appliedFilters.budgetMax) / USD_TO_INR) : '',
+        budgetMin: appliedFilters.budgetMin || '',
+        budgetMax: appliedFilters.budgetMax || '',
       };
       const cleanParams = Object.fromEntries(Object.entries(params).filter(([_, v]) => v !== '' && v !== null));
       const { data } = await talentAPI.search(cleanParams);

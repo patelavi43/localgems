@@ -95,7 +95,7 @@ export default function TalentBookingsPage() {
                       </div>
                       <div>
                         <p className="text-gem-500 text-xs">Price</p>
-                        <p className="text-gem-200 font-semibold">₹{(booking.agreedPrice * 83).toLocaleString('en-IN')}</p>
+                        <p className="text-gem-200 font-semibold">₹{(booking.agreedPrice || 0).toLocaleString('en-IN')}</p>
                       </div>
                     </div>
                     {booking.venue?.name && (

@@ -46,7 +46,7 @@ export default function BookingDetailPage() {
             ['Time', `${booking.startTime}${booking.endTime ? ` – ${booking.endTime}` : ''}`],
             ['Event Type', booking.eventType || 'Not specified'],
             ['Venue', booking.venue?.name ? `${booking.venue.name}, ${booking.venue.city}` : 'Not specified'],
-            ['Agreed Price', `₹${(booking.agreedPrice * 83).toLocaleString('en-IN')}`],
+            ['Agreed Price', `₹${(booking.agreedPrice || 0).toLocaleString('en-IN')}`],
             ['Created', format(new Date(booking.created_at), 'MMM d, yyyy')],
           ].map(([label, value]) => (
             <div key={label} className="bg-gem-900/30 rounded-lg p-3">

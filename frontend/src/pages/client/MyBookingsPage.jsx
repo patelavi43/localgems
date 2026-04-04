@@ -117,7 +117,7 @@ export default function MyBookingsPage() {
                       </div>
                       <div>
                         <p className="text-gem-500 text-xs">{t.bookings.price}</p>
-                        <p className="text-gem-200">₹{(booking.agreedPrice * 83).toLocaleString('en-IN')}</p>
+                        <p className="text-gem-200">₹{(booking.agreedPrice || 0).toLocaleString('en-IN')}</p>
                       </div>
                     </div>
                     {booking.notes && <p className="text-gem-500 text-xs mt-2 italic">"{booking.notes}"</p>}
