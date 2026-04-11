@@ -99,8 +99,6 @@ exports.getMyBookings = async (req, res, next) => {
   }
 };
 
-// ─── Get Single Booking ───────────────────────────────────────
-// GET /api/bookings/:id
 exports.getBookingById = async (req, res, next) => {
   try {
     const booking = await Booking.findById(req.params.id)

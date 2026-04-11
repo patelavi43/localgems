@@ -21,9 +21,10 @@ export function BookingStatusBadge({ status }) {
 }
 
 export function PaymentStatusBadge({ status }) {
+  const label = status || 'Unpaid';
   return (
-    <span className={`badge border text-xs ${PAYMENT_STYLES[status] || 'badge-purple'}`}>
-      {status}
+    <span className={`badge border text-xs ${PAYMENT_STYLES[label] || PAYMENT_STYLES.Unpaid}`}>
+      {label}
     </span>
   );
 }

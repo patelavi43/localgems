@@ -62,7 +62,33 @@ export default function BookingDetailPage() {
             <p className="text-gem-300 text-sm italic">"{booking.notes}"</p>
           </div>
         )}
-      </div>
-    </div>
+                {booking.notes && (
+          <div className="bg-gem-900/30 rounded-lg p-3">
+            <p className="text-gem-500 text-xs mb-1">Notes</p>
+            <p className="text-gem-300 text-sm italic">"{booking.notes}"</p>
+          </div>
+        )}
+
+        {/* Pay Now Button */}
+        {(booking.status === 'Confirmed' || booking.status === 'Completed') && booking.paymentStatus === 'Unpaid' && (
+          <div className="pt-2">
+            <button
+              onClick={() => navigate(`/payment/checkout/${booking._id}`)}
+              className="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              Pay ₹{((booking.agreedPrice || 0) + Math.round((booking.agreedPrice || 0) * 0.1)).toLocaleString('en-IN')}
+            </button>
+            <p className="text-center text-purple-500/70 text-xs mt-2">
+              Includes 10% platform fee · Secured by Razorpay
+            </p>
+          </div>
+        )}
+
+      </div>  
+    </div>    
   );
 }
+

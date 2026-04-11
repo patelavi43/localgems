@@ -78,9 +78,7 @@ export default function TalentBookingsPage() {
                       <div className="flex flex-wrap gap-1.5">
                         <BookingStatusBadge status={booking.status} />
                         {/* Only show payment badge if payment has been made */}
-                        {booking.paymentStatus !== 'Unpaid' && (
-                          <PaymentStatusBadge status={booking.paymentStatus} />
-                        )}
+                          <PaymentStatusBadge status={booking.paymentStatus || 'Unpaid'} />
                       </div>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm mb-3">

@@ -30,6 +30,10 @@ import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
 import AdminVerifyTalentsPage from './pages/admin/AdminVerifyTalentsPage';
 
+// Payment pages
+import PaymentSuccess from './pages/Payment/PaymentSuccess';
+import CheckoutPage from './pages/Payment/CheckoutPage';
+
 export default function App() {
   const { loading } = useAuth();
   if (loading) return <LoadingScreen />;
@@ -71,6 +75,11 @@ export default function App() {
           <Route path="/admin/verify-talents" element={<AdminVerifyTalentsPage />} />
         </Route>
 
+        {/* Payment pages */}
+        <Route element={<ProtectedRoute roles={['Client']} />}>
+          <Route path="/payment/checkout/:bookingId" element={<CheckoutPage />} />
+          <Route path="/payment/success/:bookingId" element={<PaymentSuccess />} />
+        </Route>
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

@@ -13,7 +13,7 @@ const reviewRoutes = require('./routes/review.routes');
 const eventRoutes = require('./routes/event.routes');
 const adminRoutes = require('./routes/admin.routes');
 const chatRoutes = require('./routes/chat.routes');
-
+const paymentRoutes = require('./routes/payment.routes');
 const app = express();
 
 // Connect to MongoDB
@@ -35,7 +35,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/chat', chatRoutes);
-
+app.use('/api/payments', paymentRoutes);
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
 
