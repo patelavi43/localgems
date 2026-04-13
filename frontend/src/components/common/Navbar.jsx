@@ -30,7 +30,11 @@ export default function Navbar() {
   const handleLogout = () => { logout(); navigate('/'); setDropOpen(false); };
 
   const navLinks = user?.role === 'Admin'
-    ? [{ to: '/admin', label: t.nav.dashboard }, { to: '/admin/users', label: t.nav.users }]
+  ? [
+      { to: '/admin', label: t.nav.dashboard },
+      { to: '/admin/users', label: t.nav.users },
+      { to: '/admin/verify-talents', label: 'Verify Talents' },
+    ]
     : user?.role === 'TalentProvider'
     ? [{ to: '/talent-dashboard', label: t.nav.dashboard }, { to: '/talent-bookings', label: t.nav.bookings }, { to: '/talent-availability', label: t.nav.availability }]
     : [{ to: '/talent', label: t.nav.findTalent }, { to: '/events', label: t.nav.events }, ...(user ? [{ to: '/bookings', label: t.nav.myBookings }, { to: '/chat', label: t.nav.messages }] : [])];
